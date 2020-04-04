@@ -29,6 +29,12 @@ class Tabulador(QWidget):
         l_nome = QLabel()
         l_nome.setText("Nome:")
         l_nome.setFont(Font)
+        l_cpf = QLabel()
+        l_cpf.setText("CPF:")
+        l_cpf.setFont(Font)
+        l_endereco = QLabel()
+        l_endereco.setText("Endereço:")
+        l_endereco.setFont(Font)
         l_numero = QLabel()
         l_numero.setText("Telefone:")
         l_numero.setFont(Font)
@@ -50,12 +56,15 @@ class Tabulador(QWidget):
 
                 #Lista de Modelos e Combo:
         self.c_modelo = QComboBox()
-        Modelos = ["Corolla", "Hilux", "SW4", "Etios", "Outro"]
+        Modelos = ["Corolla", "Hilux", "SW4", "Etios",
+                    "Yaris", "RAV4", "Outro"]
         for modelo in Modelos:
                 self.c_modelo.addItem(modelo)
                 
                 #Entradas:
         self.e_nome = QLineEdit("Nome Completo")
+        self.e_cpf = QLineEdit("Insira o CPF")
+        self.e_endereco = QLineEdit("Endereço Completo")
         self.e_numero = QLineEdit("Apenas os Números!")
         self.e_placa = QLineEdit()
         self.e_km = QLineEdit("Apenas os Números!")
@@ -76,6 +85,10 @@ class Tabulador(QWidget):
         self.layout = QVBoxLayout()
         self.layout.addWidget(l_nome)
         self.layout.addWidget(self.e_nome)
+        self.layout.addWidget(l_cpf)
+        self.layout.addWidget(self.e_cpf)
+        self.layout.addWidget(l_endereco)
+        self.layout.addWidget(self.e_endereco)
         self.layout.addWidget(l_numero)
         self.layout.addWidget(self.e_numero)
         self.layout.addWidget(l_modelo)
@@ -93,9 +106,11 @@ class Tabulador(QWidget):
 
     @Slot()    
     def salvar(self): #capturas
-                
+        n_os = len(os.listdir(caminho)) + 1
         dia = strftime("%d %m %Y")
         nome = self.e_nome.text()
+        cpf = self.e_cpf.text()
+        endereco = self.e_endereco.text()
         numero = self.e_numero.text()
         placa = self.e_placa.text()
         mod = self.c_modelo.currentText()
@@ -106,7 +121,8 @@ class Tabulador(QWidget):
                 #formataçao de strings
         nome = nome.title()             # Primeira Maiúscula
         placa = placa.upper()           # Todas Maiúsculas
-        Info = ("\n" + dia + '\nNome: ' + nome +
+        Info = ("Ordem de Serviço: " + n_os + "\n" + dia + '\nNome: ' + nome +
+                '\nCPF: ' + CPF + '\Endereço: ' + endereco +
                 '\nTelefone: ' + numero + "\nModelo: " + mod +
                 "\nPlaca: "+ placa + "\nQuilometragem: "+ km +
                 "\nValor: " + valor + "\nServiço: \n"+ servico)
@@ -125,6 +141,8 @@ class Tabulador(QWidget):
             f.write(Info)
             f.close()
             self.e_nome = QLineEdit("Nome Completo")
+            self.e_cpf = QLineEdit("Insira o CPF")
+            self.e_endereco = QLineEdit("Endereço Completo")
             self.e_numero = QLineEdit("Apenas os Números!")
             self.e_placa = QLineEdit("")
             self.e_km = QLineEdit("Apenas os Números!")
@@ -294,4 +312,3 @@ if __name__ == "__main__":
     window.resize(500, 600)
     window.show()
     sys.exit(app.exec_())
-
