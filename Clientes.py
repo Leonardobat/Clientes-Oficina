@@ -1,10 +1,10 @@
 # Leitor de Dados
 import sys
-from buscador import buscador_clientes
-from novo_cliente import novo_cliente
-from PySide2.QtCore import Slot, Signal
-from PySide2.QtWidgets import (
-    QAction,
+from DB import init_db
+from Gui import Buscador, NovoCliente
+from PySide6.QtCore import Slot, Signal
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
     QApplication,
     QFrame,
     QGridLayout,
@@ -16,16 +16,16 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-
 class Principal(QMainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
+        self.inicializar_db()
         self.setWindowTitle("Tião Automecânica - Clientes")
         self.widget = QWidget()
 
         # Janelas
-        w1, w2 = buscador_clientes(), novo_cliente()
+        w1, w2 = Buscador(), NovoCliente()
         w1.status_signal.connect(self.atualizar_status)
         w2.status_signal.connect(self.atualizar_status)
 
@@ -60,7 +60,7 @@ class Principal(QMainWindow):
     def info(self):
         self.popup = QMessageBox(QMessageBox.Information, "Sobre",
                                  "Informações")
-        self.popup.setInformativeText("""Clientes \nVersão 0.4
+        self.popup.setInformativeText("""Clientes \nVersão 0.5
         \nFeito com S2 por Zero \nMIT License""")
         self.popup.addButton(QMessageBox.Ok)
         self.popup.exec()
@@ -69,6 +69,17 @@ class Principal(QMainWindow):
     def atualizar_status(self, msg: str):
         self.status_label.setText(msg)
 
+    @staticmethod
+    def inicializar_db():
+        try:
+            init_db()
+        except NameError:
+            popup = QMessageBox(QMessageBox.Critical, "Erro",
+                                 "Erro")
+            popup.setInformativeText("Arquivo de configuração não foi encontrado")
+            popup.addButton(QMessageBox.Ok)
+            popup.exec()
+            exit(1)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

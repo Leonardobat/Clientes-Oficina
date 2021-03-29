@@ -3,7 +3,7 @@ from pathlib import Path
 from getpass import getuser
 
 
-class clientes_db():
+class ClientesDB():
 
     def __init__(self):
         if sys.platform.startswith('linux'):
@@ -50,23 +50,29 @@ def init_db():
 
     # Aquisição do caminho
     if sys.platform.startswith('linux'):
-        path = Path.home().joinpath('Documentos', 'Oficina', 'Clientes')
-        config = Path.home().joinpath('.oficina', 'schema_clientes.sql')
-    
+        path = Path.home().joinpath('Documentos', 'Oficina', 'Clientes',
+                                    'clientes.sqlite')
+        configPath = Path.home().joinpath('.config', 'oficina',
+                                          'schema_clientes.sql')
+
     elif sys.platform.startswith('win'):
-        path = Path.home().joinpath('Documents', 'Oficina', 'Clientes')
-        path = Path.home().joinpath('Documents', 'Oficina',
-                                    'schema_clientes.sql')
+        path = Path.home().joinpath('Documents', 'Oficina', 'Clientes',
+                                    'clientes.sqlite')
+        configPath = Path.home().joinpath('Documents', 'Oficina',
+                                          'schema_clientes.sql')
 
     # Cria a pasta
-    Path.mkdir(path, parents=True, exist_ok=True)
-    path_db = path.joinpath('clientes.sqlite')
-    db = sqlite3.connect(str(path_db))
-    with open(str(config)) as f:
-        db.executescript(f.read())
-        db.execute("VACUUM")
-        db.commit()
-        db.close()
+    if not Path.is_file(configPath):
+        raise NameError('No Config was Found')
+
+    if not Path.is_file(path):
+        Path.mkdir(path, parents=True, exist_ok=True)
+        db = sqlite3.connect(path)
+        with Path.open(configPath) as f:
+            db.executescript(f.read())
+            db.execute("VACUUM")
+            db.commit()
+            db.close()
 
 
 if __name__ == "__main__":
