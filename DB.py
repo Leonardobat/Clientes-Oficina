@@ -50,14 +50,12 @@ def init_db():
 
     # Aquisição do caminho
     if sys.platform.startswith('linux'):
-        path = Path.home().joinpath('Documentos', 'Oficina', 'Clientes',
-                                    'clientes.sqlite')
+        path = Path.home().joinpath('Documentos', 'Oficina', 'Clientes')
         configPath = Path.home().joinpath('.config', 'oficina',
                                           'schema_clientes.sql')
 
     elif sys.platform.startswith('win'):
-        path = Path.home().joinpath('Documents', 'Oficina', 'Clientes',
-                                    'clientes.sqlite')
+        path = Path.home().joinpath('Documents', 'Oficina', 'Clientes')
         configPath = Path.home().joinpath('Documents', 'Oficina',
                                           'schema_clientes.sql')
 
@@ -65,9 +63,10 @@ def init_db():
     if not Path.is_file(configPath):
         raise NameError('No Config was Found')
 
-    if not Path.is_file(path):
+    if not Path.is_dir(path):
         Path.mkdir(path, parents=True, exist_ok=True)
-        db = sqlite3.connect(path)
+        file_path = str(path.joinpath('clientes.sqlite'))
+        db = sqlite3.connect(file_path)
         with Path.open(configPath) as f:
             db.executescript(f.read())
             db.execute("VACUUM")
