@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+
 class Principal(QMainWindow):
 
     def __init__(self):
@@ -74,12 +75,13 @@ class Principal(QMainWindow):
         try:
             init_db()
         except NameError:
-            popup = QMessageBox(QMessageBox.Critical, "Erro",
-                                 "Erro")
-            popup.setInformativeText("Arquivo de configuração não foi encontrado")
+            popup = QMessageBox(QMessageBox.Critical, "Erro", "Erro")
+            popup.setInformativeText(
+                "Arquivo de configuração não foi encontrado")
             popup.addButton(QMessageBox.Ok)
             popup.exec()
             exit(1)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QLineEdit,
     QListWidget,
+    QMessageBox,
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
@@ -132,7 +133,7 @@ class NovoCliente(QWidget):
         self.button_salvar.clicked.connect(self.salvar_cliente)
         self.button_salvar.setShortcut("Ctrl+S")
         self.button_cancelar = QPushButton("Cancelar")
-        self.button_cancelar.clicked.connect(self.cancelar)
+        self.button_cancelar.clicked.connect(self.limpar)
         self.button_cancelar.setShortcut("ESC")
 
         # Linha
@@ -173,12 +174,18 @@ class NovoCliente(QWidget):
             'numero': numero,
             'endereco': endereco
         }
-        self.db.novo_cliente(data)
-        self.status_signal.emit("Salvo")
-        self.cancelar()
+        try:
+            self.db.novo_cliente(data)
+            self.status_signal.emit("Salvo")
+            self.limpar()
+        except ValueError as e:
+            popup = QMessageBox(QMessageBox.Critical, "Erro", "Campo Inválido")
+            popup.setInformativeText(str(e))
+            popup.addButton(QMessageBox.Ok)
+            popup.exec()
 
     @Slot()
-    def cancelar(self):
+    def limpar(self):
         self.entry_nome.setText('')
         self.entry_endereco.setText('')
         self.entry_numero.setText('')
